@@ -28,7 +28,6 @@ public class RagService {
     private final RestClient openai;
     private final String collection;
     private final String model;
-    private final Gson gson = new Gson();
 
 
     private static final Logger logger = LoggerFactory.getLogger(RagService.class);
@@ -97,7 +96,7 @@ public class RagService {
                 "with_payload", true);
 
         logger.info("Built search parameter for Qdrant");
-        logger.debug("serch parameter for Qdrant: {}", gson.toJson(search));
+        logger.debug("serch parameter for Qdrant: {}", search);
         return search;
     }
 
@@ -119,7 +118,7 @@ public class RagService {
             return null;
         }
         logger.info("Response found, not null...");
-        logger.debug("Response found! Response: {}", gson.toJson(hits));
+        logger.debug("Response found! Response: {}", hits);
         return hits;
     }
 
@@ -150,7 +149,7 @@ public class RagService {
             return null;
         }
         logger.info("Matching records found...");
-        logger.debug(gson.toJson("Edited response before sending to LLM: {}"), gson.toJson(context));
+        logger.debug("Edited response before sending to LLM: {}", context);
         return new RetrievedContext(context.toString(), sources);
     }
 
@@ -179,7 +178,7 @@ public class RagService {
                 )));
 
         logger.info("llmBody prepared. About to send to LLM");
-        logger.debug("full llmBody before send: {}", gson.toJson(llmBody));
+        logger.debug("full llmBody before send: {}", llmBody);
         return llmBody;
     }
 
