@@ -46,7 +46,7 @@ The detailed flow chart, including every branch and error path, and a sequence d
    - a dense query `{text, model}` against the collection's **unnamed** vector, limit 10, embedded server-side by Qdrant Cloud inference;
    - a BM25 query `{text}` using the `text` index, limit 10;
    - fused with `{"fusion": "rrf"}`, limit 5, `with_payload: true`.
-3. The query is sent to `POST {QDRANT_URI}/collections/{collection}/points/query` with the `api-key` header.
+3. The query is sent to `POST {QDRANT_URL}/collections/{collection}/points/query` with the `api-key` header.
 4. If Qdrant returns no points, the service answers `"No matching Stack Overflow records were found."` with an empty source list, and OpenAI is not called.
 5. Each hit's `payload.question` and `payload.accepted_answer` are read. Hits missing either one are skipped. The rest are numbered `[Source 1]`, `[Source 2]`, ... with the question cut to 1500 characters and the answer to 4000 characters, which bounds the prompt size. If no hit is usable, the service answers `"Matching records had no usable accepted answers."` and OpenAI is not called.
 6. A chat-completions request is sent to `https://api.openai.com/v1/chat/completions` with the configured model, the system prompt, and a user message containing the question and the retrieved context.
@@ -68,7 +68,7 @@ Settings live in `src/main/resources/application.yml`.
 
 | Property | Environment variable | Default | Notes |
 | --- | --- | --- | --- |
-| `qdrant.uri` | `QDRANT_URI` | none, required | e.g. `https://YOUR-CLUSTER.cloud.qdrant.io` |
+| `qdrant.url` | `QDRANT_URL` | none, required | e.g. `https://YOUR-CLUSTER.cloud.qdrant.io` |
 | `qdrant.api-key` | `QDRANT_API_KEY` | none, required | Sent as the `api-key` header. |
 | `openai.api-key` | `OPENAI_API_KEY` | none, required | Sent as `Authorization: Bearer ...`. |
 | `qdrant.collection` | `QDRANT_COLLECTION` | `stackoverflow` | |
@@ -81,7 +81,7 @@ The three required variables must be set. If any is missing the app fails at sta
 Bash:
 
 ```bash
-export QDRANT_URI="https://YOUR-CLUSTER.cloud.qdrant.io"
+export QDRANT_URL="https://YOUR-CLUSTER.cloud.qdrant.io"
 export QDRANT_API_KEY="YOUR_QDRANT_KEY"
 export OPENAI_API_KEY="YOUR_OPENAI_KEY"
 ```
@@ -89,7 +89,7 @@ export OPENAI_API_KEY="YOUR_OPENAI_KEY"
 PowerShell (current session only):
 
 ```powershell
-$env:QDRANT_URI = "https://YOUR-CLUSTER.cloud.qdrant.io"
+$env:QDRANT_URL = "https://YOUR-CLUSTER.cloud.qdrant.io"
 $env:QDRANT_API_KEY = "YOUR_QDRANT_KEY"
 $env:OPENAI_API_KEY = "YOUR_OPENAI_KEY"
 ```
@@ -107,7 +107,7 @@ mvn clean package
 java -jar target/hybrid-rag-0.0.1-SNAPSHOT.jar
 
 docker build -t hybrid-rag .
-docker run -p 8080:8080 -e QDRANT_URI -e QDRANT_API_KEY -e OPENAI_API_KEY hybrid-rag
+docker run -p 8080:8080 -e QDRANT_URL -e QDRANT_API_KEY -e OPENAI_API_KEY hybrid-rag
 ```
 
 The Dockerfile copies a pre-built jar from `target/`, so run `mvn package` before `docker build`.
