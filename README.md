@@ -1,9 +1,9 @@
 # Stack Overflow Hybrid RAG — Spring Boot
 
-Spring Boot 3 (Java 17) endpoint that retrieves Stack Overflow Q&A records from your existing Qdrant Cloud collection using **dense semantic search + BM25 full-text search + Qdrant RRF**, then sends the top five source Q&As to OpenAI for a grounded answer.
+Spring Boot 3 (Java 21) endpoint that retrieves Stack Overflow Q&A records from your existing Qdrant Cloud collection using **dense semantic search + BM25 full-text search + Qdrant RRF**, then sends the top five source Q&As to OpenAI for a grounded answer.
 
 ## Prerequisites
-- Java 17+ and Maven 3.9+
+- Java 21+ and Maven 3.9+
 - Qdrant Cloud collection `stackoverflow` already populated with the Python ingestion script (unnamed 384-dimensional dense vectors, payload fields `question`, `accepted_answer`, `text`)
 - **BM25-scoring full-text index on payload field `text`** (not merely a sparse vector named `bm25`)
 - Qdrant Cloud inference enabled and the `sentence-transformers/all-minilm-l6-v2` model available
@@ -14,7 +14,7 @@ Spring Boot 3 (Java 17) endpoint that retrieves Stack Overflow Q&A records from 
 PowerShell (current session only):
 
 ```powershell
-$env:QDRANT_URL = "https://YOUR-CLUSTER.cloud.qdrant.io"
+$env:QDRANT_URI = "https://YOUR-CLUSTER.cloud.qdrant.io"
 $env:QDRANT_API_KEY = "YOUR_QDRANT_KEY"
 $env:OPENAI_API_KEY = "YOUR_OPENAI_KEY"
 # Optional: $env:OPENAI_MODEL = "gpt-4.1-mini"

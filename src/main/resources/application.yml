@@ -1,12 +1,19 @@
+spring:
+  application:
+    name: 'hybrid-rag'
+server:
+  port: 8080
 openai:
   api-key: ${OPENAI_API_KEY}
 qdrant:
   api-key: ${QDRANT_API_KEY}
   uri: ${QDRANT_URI}
   collection: 'stackoverflow'
+rag:
+  openai-model: 'gpt-4:1-mini'
 logging:
   level:
-    com.example.stackoverflow: DEBUG
+    io.github.mrmtd.rag: ${LOG_LEVEL:DEBUG}
 springdoc:
   swagger-ui:
     path: /swagger

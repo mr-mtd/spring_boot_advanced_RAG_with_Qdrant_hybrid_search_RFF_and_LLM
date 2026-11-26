@@ -8,12 +8,12 @@
         <version>3.4.5</version>
         <relativePath/>
     </parent>
-    <groupId>com.example</groupId>
+    <groupId>io.github.mrmtd.rag</groupId>
     <artifactId>hybrid-rag</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>hybrid-rag</name>
     <description>Spring Boot hybrid Qdrant retrieval with RRF and OpenAI synthesis</description>
-    <properties><java.version>17</java.version></properties>
+    <properties><java.version>21</java.version></properties>
 
     <dependencies>
         <dependency>
