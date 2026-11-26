@@ -9,9 +9,9 @@
         <relativePath/>
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>stackoverflow-hybrid-rag</artifactId>
+    <artifactId>hybrid-rag</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>stackoverflow-hybrid-rag</name>
+    <name>hybrid-rag</name>
     <description>Spring Boot hybrid Qdrant retrieval with RRF and OpenAI synthesis</description>
     <properties><java.version>17</java.version></properties>
 

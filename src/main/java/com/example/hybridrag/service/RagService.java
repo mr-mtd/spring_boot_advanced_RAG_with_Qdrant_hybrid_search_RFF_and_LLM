@@ -1,7 +1,7 @@
-package com.example.stackoverflow.service;
+package com.example.hybridrag.service;
 
-import com.example.stackoverflow.api.AskController.AskResponse;
-import com.example.stackoverflow.api.AskController.Source;
+import com.example.hybridrag.api.AskController.AskResponse;
+import com.example.hybridrag.api.AskController.Source;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
