@@ -7,7 +7,7 @@ openai:
   api-key: ${OPENAI_API_KEY}
 qdrant:
   api-key: ${QDRANT_API_KEY}
-  uri: ${QDRANT_URL}
+  url: ${QDRANT_URL}
   collection: 'stackoverflow'
 rag:
   openai-model: ${OPENAI_MODEL:gpt-4.1-mini}

@@ -32,15 +32,15 @@ public class RagService {
     private static final Logger logger = LoggerFactory.getLogger(RagService.class);
 
     public RagService(RestClient.Builder builder,
-                    @Value("${qdrant.uri}") String qdrantUri,
+                    @Value("${qdrant.url}") String qdrantUrl,
                     @Value("${openai.api-key}") String openaiKey,
                     @Value("${qdrant.api-key}") String qdrantKey,
                     @Value("${qdrant.collection:stackoverflow}") String collection,
                     @Value("${rag.openai-model:gpt-4.1-mini}") String model) {
-        if (qdrantUri.isBlank() || qdrantKey.isBlank() || openaiKey.isBlank()) {
+        if (qdrantUrl.isBlank() || qdrantKey.isBlank() || openaiKey.isBlank()) {
             throw new IllegalArgumentException("Set QDRANT_URL, QDRANT_API_KEY and OPENAI_API_KEY");
         }
-        this.qdrant = builder.clone().baseUrl(qdrantUri)
+        this.qdrant = builder.clone().baseUrl(qdrantUrl)
                 .defaultHeader("api-key", qdrantKey).build();
         this.openai = builder.clone().baseUrl("https://api.openai.com/v1")
                 .defaultHeader("Authorization", "Bearer " + openaiKey).build();
