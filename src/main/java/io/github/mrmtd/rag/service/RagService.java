@@ -148,7 +148,6 @@ public class RagService {
             return null;
         }
         logger.info("Matching records found...");
-        logger.debug("Edited response before sending to LLM: {}", context);
         return new RetrievedContext(context.toString(), sources);
     }
 

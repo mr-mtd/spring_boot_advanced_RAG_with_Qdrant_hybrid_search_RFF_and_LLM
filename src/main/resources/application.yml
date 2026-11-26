@@ -10,7 +10,7 @@ qdrant:
   uri: ${QDRANT_URL}
   collection: 'stackoverflow'
 rag:
-  openai-model: ${OPENAI_MODEL:gpt-4:1-mini}
+  openai-model: ${OPENAI_MODEL:gpt-4.1-mini}
 logging:
   level:
     io.github.mrmtd.rag: ${LOG_LEVEL:DEBUG}
