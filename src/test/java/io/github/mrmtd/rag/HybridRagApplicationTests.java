@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * No request is sent, so Qdrant and OpenAI are never contacted.
  */
 @SpringBootTest(properties = {
-        "qdrant.uri=https://qdrant.test",
+        "qdrant.url=https://qdrant.test",
         "qdrant.api-key=test-qdrant-key",
         "openai.api-key=test-openai-key"
 })

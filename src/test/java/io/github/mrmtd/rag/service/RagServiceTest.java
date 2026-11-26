@@ -35,8 +35,8 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  */
 class RagServiceTest {
 
-    private static final String QDRANT_URI = "https://qdrant.test";
-    private static final String QDRANT_QUERY_URL = QDRANT_URI + "/collections/test-collection/points/query";
+    private static final String QDRANT_URL = "https://qdrant.test";
+    private static final String QDRANT_QUERY_URL = QDRANT_URL + "/collections/test-collection/points/query";
     private static final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
     private static final String QUESTION = "How do I retry a Kafka consumer?";
 
@@ -48,7 +48,7 @@ class RagServiceTest {
         RestClient.Builder builder = RestClient.builder();
         // Binding before the service is created means both cloned clients use the mock.
         server = MockRestServiceServer.bindTo(builder).build();
-        service = new RagService(builder, QDRANT_URI, "openai-key", "qdrant-key",
+        service = new RagService(builder, QDRANT_URL, "openai-key", "qdrant-key",
                 "test-collection", "test-model");
     }
 
