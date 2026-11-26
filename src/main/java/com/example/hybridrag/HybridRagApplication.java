@@ -1,11 +1,11 @@
-package com.example.stackoverflow;
+package com.example.hybridrag;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class StackOverflowRagApplication {
+public class HybridRagApplication {
     public static void main(String[] args) {
-        SpringApplication.run(StackOverflowRagApplication.class, args);
+        SpringApplication.run(HybridRagApplication.class, args);
     }
 }

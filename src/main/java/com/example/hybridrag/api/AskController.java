@@ -1,6 +1,6 @@
-package com.example.stackoverflow.api;
+package com.example.hybridrag.api;
 
-import com.example.stackoverflow.service.RagService;
+import com.example.hybridrag.service.RagService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

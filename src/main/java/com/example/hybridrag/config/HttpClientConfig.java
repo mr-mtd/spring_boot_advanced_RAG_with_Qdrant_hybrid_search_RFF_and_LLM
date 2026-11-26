@@ -1,4 +1,4 @@
-package com.example.stackoverflow.config;
+package com.example.hybridrag.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
