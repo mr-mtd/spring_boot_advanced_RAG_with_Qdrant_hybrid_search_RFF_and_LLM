@@ -29,8 +29,8 @@ public class RagService {
 
     public RagService(RestClient.Builder builder,
                     @Value("${qdrant.uri}") String qdrantUrl,
-                    @Value("${openai.api-key}") String qdrantKey,
-                    @Value("${qdrant.api-key}") String openaiKey,
+                    @Value("${openai.api-key}") String openaiKey,
+                    @Value("${qdrant.api-key}") String qdrantKey,
                     @Value("${qdrant.collection:stackoverflow}") String collection,
                     @Value("${rag.openai-model:gpt-4.1-mini}") String model) {
         if (qdrantUrl.isBlank() || qdrantKey.isBlank() || openaiKey.isBlank()) {
@@ -42,6 +42,12 @@ public class RagService {
                 .defaultHeader("Authorization", "Bearer " + openaiKey).build();
         this.collection = collection;
         this.model = model;
+        logger.debug("qdrant url is: {}", qdrantUrl);
+        logger.debug("qdrant api key is: {}", qdrantKey);
+        logger.debug("openai api key is: {}", openaiKey);
+
+
+
     }
 
     public AskResponse ask(String question) {
