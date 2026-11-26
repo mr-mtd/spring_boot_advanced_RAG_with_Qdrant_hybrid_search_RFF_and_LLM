@@ -1,4 +1,4 @@
-package com.example.hybridrag;
+package io.github.mrmtd.rag;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

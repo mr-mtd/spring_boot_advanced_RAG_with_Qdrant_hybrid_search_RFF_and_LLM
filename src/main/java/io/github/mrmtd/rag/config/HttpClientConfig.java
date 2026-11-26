@@ -1,4 +1,4 @@
-package com.example.hybridrag.config;
+package io.github.mrmtd.rag.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

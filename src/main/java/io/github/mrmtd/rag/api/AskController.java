@@ -1,6 +1,9 @@
-package com.example.hybridrag.api;
+package io.github.mrmtd.rag.api;
 
-import com.example.hybridrag.service.RagService;
+import io.github.mrmtd.rag.dto.AskRequest;
+import io.github.mrmtd.rag.dto.AskResponse;
+import io.github.mrmtd.rag.dto.Source;
+import io.github.mrmtd.rag.service.RagService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -25,7 +28,4 @@ public class AskController {
         return ragService.ask(request.question());
     }
 
-    public record AskRequest(@NotBlank @Size(max = 4000) String question) { }
-    public record Source(String id, String question) { }
-    public record AskResponse(String answer, List<Source> sources) { }
 }

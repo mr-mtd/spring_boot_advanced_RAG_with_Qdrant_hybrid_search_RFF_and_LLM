@@ -1,7 +1,7 @@
-package com.example.hybridrag.service;
+package io.github.mrmtd.rag.service;
 
-import com.example.hybridrag.api.AskController.AskResponse;
-import com.example.hybridrag.api.AskController.Source;
+import io.github.mrmtd.rag.dto.AskResponse;
+import io.github.mrmtd.rag.dto.Source;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
@@ -28,32 +28,25 @@ public class RagService {
     private final RestClient openai;
     private final String collection;
     private final String model;
-    private final Gson gson = new Gson();
 
 
     private static final Logger logger = LoggerFactory.getLogger(RagService.class);
 
     public RagService(RestClient.Builder builder,
-                    @Value("${qdrant.uri}") String qdrantUrl,
+                    @Value("${qdrant.uri}") String qdrantUri,
                     @Value("${openai.api-key}") String openaiKey,
                     @Value("${qdrant.api-key}") String qdrantKey,
                     @Value("${qdrant.collection:stackoverflow}") String collection,
                     @Value("${rag.openai-model:gpt-4.1-mini}") String model) {
-        if (qdrantUrl.isBlank() || qdrantKey.isBlank() || openaiKey.isBlank()) {
+        if (qdrantUri.isBlank() || qdrantKey.isBlank() || openaiKey.isBlank()) {
             throw new IllegalArgumentException("Set QDRANT_URL, QDRANT_API_KEY and OPENAI_API_KEY");
         }
-        this.qdrant = builder.clone().baseUrl(qdrantUrl)
+        this.qdrant = builder.clone().baseUrl(qdrantUri)
                 .defaultHeader("api-key", qdrantKey).build();
         this.openai = builder.clone().baseUrl("https://api.openai.com/v1")
                 .defaultHeader("Authorization", "Bearer " + openaiKey).build();
         this.collection = collection;
         this.model = model;
-        logger.debug("qdrant url is: {}", qdrantUrl);
-        logger.debug("qdrant api key is: {}", qdrantKey);
-        logger.debug("openai api key is: {}", openaiKey);
-
-
-
     }
 
     public AskResponse ask(String question) {
@@ -103,7 +96,7 @@ public class RagService {
                 "with_payload", true);
 
         logger.info("Built search parameter for Qdrant");
-        logger.debug("serch parameter for Qdrant: {}", gson.toJson(search));
+        logger.debug("serch parameter for Qdrant: {}", search);
         return search;
     }
 
@@ -125,7 +118,7 @@ public class RagService {
             return null;
         }
         logger.info("Response found, not null...");
-        logger.debug("Response found! Response: {}", gson.toJson(hits));
+        logger.debug("Response found! Response: {}", hits);
         return hits;
     }
 
@@ -156,7 +149,7 @@ public class RagService {
             return null;
         }
         logger.info("Matching records found...");
-        logger.debug(gson.toJson("Edited response before sending to LLM: {}"), gson.toJson(context));
+        logger.debug("Edited response before sending to LLM: {}", context);
         return new RetrievedContext(context.toString(), sources);
     }
 
@@ -185,7 +178,7 @@ public class RagService {
                 )));
 
         logger.info("llmBody prepared. About to send to LLM");
-        logger.debug("full llmBody before send: {}", gson.toJson(llmBody));
+        logger.debug("full llmBody before send: {}", llmBody);
         return llmBody;
     }
 
