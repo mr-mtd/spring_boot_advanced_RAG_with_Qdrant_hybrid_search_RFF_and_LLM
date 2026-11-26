@@ -3,7 +3,6 @@ package io.github.mrmtd.rag.service;
 import io.github.mrmtd.rag.dto.AskResponse;
 import io.github.mrmtd.rag.dto.Source;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
