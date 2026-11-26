@@ -1,5 +1,10 @@
 # Hybrid RAG over Stack Overflow with Spring Boot, Qdrant and OpenAI
-
+[![Spring Boot CI](https://github.com/mr-mtd/springboot_hybrid_RAG/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/mr-mtd/springboot_hybrid_RAG/actions/workflows/build.yml)
+![Java 21](https://img.shields.io/badge/Java-21-E76F00)
+![Spring Boot 3.4.5](https://img.shields.io/badge/Spring_Boot-3.4.5-6DB33F?logo=springboot&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
+![Qdrant Cloud](https://img.shields.io/badge/Qdrant-Cloud-DC244C)
+![AWS](https://img.shields.io/badge/AWS-232F3E)
 A small Spring Boot 3.4 / Java 21 service that answers software-engineering questions from a Stack Overflow Q&A collection stored in Qdrant Cloud. Each question is answered in two steps:
 
 1. **Hybrid retrieval in Qdrant.** One query runs a dense semantic search (Qdrant Cloud inference with `sentence-transformers/all-minilm-l6-v2`) and a BM25 full-text search side by side, then Qdrant fuses the two ranked lists with **Reciprocal Rank Fusion (RRF)** and returns the top 5 records.
