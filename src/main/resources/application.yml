@@ -1,0 +1,12 @@
+openai:
+  api-key: ${OPENAI_API_KEY}
+qdrant:
+  api-key: ${QDRANT_API_KEY}
+  uri: ${QDRANT_URI}
+  collection: 'stackoverflow'
+logging:
+  level:
+    com.example.stackoverflow: DEBUG
+springdoc:
+  swagger-ui:
+    path: /swagger
