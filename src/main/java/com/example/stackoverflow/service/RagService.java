@@ -81,6 +81,8 @@ public class RagService {
      * fused by Qdrant with Reciprocal Rank Fusion.
      */
     private Map<String, Object> buildHybridSearchRequest(String question) {
+        logger.info("entered RagService.buildHybridSearchRequest");
+
         // Both prefetch queries run on Qdrant; Qdrant performs RRF internally.
         // Your original Python ingestion script created an UNNAMED dense vector.
         Map<String, Object> dense = Map.of(
@@ -110,6 +112,8 @@ public class RagService {
      * or {@code null} when nothing was found.
      */
     private JsonNode queryQdrant(Map<String, Object> search) {
+        logger.info("entered RagService.queryQdrant");
+
         //call Qdrant DB through API
         JsonNode response = qdrant.post()
                 .uri("/collections/{collection}/points/query", collection)
@@ -131,6 +135,8 @@ public class RagService {
      * when no hit is usable.
      */
     private RetrievedContext buildContext(JsonNode hits) {
+        logger.info("entered RagService.buildContext");
+
         StringBuilder context = new StringBuilder();
         List<Source> sources = new ArrayList<>();
         int sourceNum = 0;
@@ -155,6 +161,7 @@ public class RagService {
     }
 
     private static void appendSource(StringBuilder context, int sourceNum, String question, String answer) {
+        logger.info("entered RagService.appendSource");
         // Bound each answer to prevent unexpectedly large prompt requests.
         context.append("[Source ").append(sourceNum).append("]\nQuestion: ")
                 .append(question, 0, Math.min(1500, question.length()))
@@ -165,6 +172,8 @@ public class RagService {
 
     /** Builds the chat-completions request body from the question and retrieved context. */
     private Map<String, Object> buildLlmRequest(String question, String context) {
+        logger.info("entered RagService.buildLlmRequest");
+
         //Prepare to feed Qdrant response to the LLM for user output
         Map<String, Object> llmBody = new LinkedHashMap<>();
         llmBody.put("model", model);
@@ -182,6 +191,8 @@ public class RagService {
 
     /** Calls OpenAI and returns the first choice's content, failing on a missing or empty answer. */
     private String callLlm(Map<String, Object> llmBody) {
+        logger.info("entered RagService.callLlm");
+
         JsonNode completion = openai.post().uri("/chat/completions")
                 .body(llmBody).retrieve().body(JsonNode.class);
         JsonNode choices = completion == null ? null : completion.path("choices");
