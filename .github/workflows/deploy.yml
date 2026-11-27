@@ -72,6 +72,9 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           QDRANT_API_KEY: ${{ secrets.QDRANT_API_KEY }}
           QDRANT_URL: ${{ secrets.QDRANT_URL }}
+          # Optional repo variable (Settings > Secrets and variables > Actions > Variables).
+          # Comma-separated frontend origins allowed by CORS. When unset, the app's localhost defaults apply.
+          CORS_ALLOWED_ORIGINS: ${{ vars.CORS_ALLOWED_ORIGINS }}
         run: |
           jq -n \
             --arg name "$CONTAINER_NAME" \
@@ -79,16 +82,17 @@ jobs:
             --arg openai "$OPENAI_API_KEY" \
             --arg qkey "$QDRANT_API_KEY" \
             --arg qurl "$QDRANT_URL" \
+            --arg cors "$CORS_ALLOWED_ORIGINS" \
             '{($name): {
                 image: $image,
                 ports: {"8080": "HTTP"},
-                environment: {
+                environment: ({
                   OPENAI_API_KEY: $openai,
                   QDRANT_API_KEY: $qkey,
                   QDRANT_URL: $qurl,
                   LOG_LEVEL: "INFO",
                   JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75"
-                }
+                } + (if $cors == "" then {} else {CORS_ALLOWED_ORIGINS: $cors} end))
               }}' > containers.json
 
           jq -n --arg name "$CONTAINER_NAME" '{
