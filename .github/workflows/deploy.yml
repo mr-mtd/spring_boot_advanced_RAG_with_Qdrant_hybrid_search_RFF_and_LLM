@@ -1,0 +1,130 @@
+name: Deploy to AWS Lightsail
+
+# Builds the app, pushes the Docker image to the Lightsail container service,
+# and rolls out a new deployment on every push to main (or on manual run).
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # lets GitHub get short-lived AWS credentials via OIDC (no stored AWS keys)
+
+concurrency:
+  group: deploy-lightsail
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: us-east-2
+  SERVICE_NAME: hybrid-rag
+  CONTAINER_NAME: app
+  IMAGE_LABEL: app
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Build and test
+        run: mvn -B clean verify
+
+      - name: Build Docker image
+        run: docker build -t hybrid-rag:${{ github.sha }} .
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Install lightsailctl plugin
+        run: |
+          sudo curl -fsSL "https://s3.us-west-2.amazonaws.com/lightsailctl/latest/linux-amd64/lightsailctl" -o /usr/local/bin/lightsailctl
+          sudo chmod +x /usr/local/bin/lightsailctl
+
+      - name: Push image to Lightsail
+        id: push
+        run: |
+          OUTPUT=$(aws lightsail push-container-image \
+            --service-name "$SERVICE_NAME" \
+            --label "$IMAGE_LABEL" \
+            --image "hybrid-rag:${{ github.sha }}")
+          echo "$OUTPUT"
+          IMAGE=$(echo "$OUTPUT" | grep -o "\":${SERVICE_NAME}\.${IMAGE_LABEL}\.[0-9]*\"" | tail -1 | tr -d '"')
+          if [ -z "$IMAGE" ]; then echo "Could not read pushed image name" >&2; exit 1; fi
+          echo "image=$IMAGE" >> "$GITHUB_OUTPUT"
+
+      - name: Create Lightsail deployment
+        env:
+          IMAGE: ${{ steps.push.outputs.image }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          QDRANT_API_KEY: ${{ secrets.QDRANT_API_KEY }}
+          QDRANT_URL: ${{ secrets.QDRANT_URL }}
+        run: |
+          jq -n \
+            --arg name "$CONTAINER_NAME" \
+            --arg image "$IMAGE" \
+            --arg openai "$OPENAI_API_KEY" \
+            --arg qkey "$QDRANT_API_KEY" \
+            --arg qurl "$QDRANT_URL" \
+            '{($name): {
+                image: $image,
+                ports: {"8080": "HTTP"},
+                environment: {
+                  OPENAI_API_KEY: $openai,
+                  QDRANT_API_KEY: $qkey,
+                  QDRANT_URL: $qurl,
+                  LOG_LEVEL: "INFO",
+                  JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75"
+                }
+              }}' > containers.json
+
+          jq -n --arg name "$CONTAINER_NAME" '{
+              containerName: $name,
+              containerPort: 8080,
+              healthCheck: {
+                path: "/actuator/health",
+                successCodes: "200",
+                intervalSeconds: 30,
+                timeoutSeconds: 5,
+                healthyThreshold: 2,
+                unhealthyThreshold: 5
+              }
+            }' > public-endpoint.json
+
+          aws lightsail create-container-service-deployment \
+            --service-name "$SERVICE_NAME" \
+            --containers file://containers.json \
+            --public-endpoint file://public-endpoint.json \
+            --query 'containerService.state' --output text
+          rm -f containers.json
+
+      - name: Wait for deployment to go live
+        run: |
+          for i in $(seq 1 40); do
+            STATE=$(aws lightsail get-container-services --service-name "$SERVICE_NAME" \
+              --query 'containerServices[0].state' --output text)
+            DEPLOY=$(aws lightsail get-container-services --service-name "$SERVICE_NAME" \
+              --query 'containerServices[0].nextDeployment.state' --output text)
+            echo "service=$STATE nextDeployment=$DEPLOY"
+            if [ "$STATE" = "RUNNING" ] && { [ "$DEPLOY" = "None" ] || [ "$DEPLOY" = "null" ]; }; then LIVE=1; break; fi
+            if [ "$DEPLOY" = "FAILED" ]; then echo "Deployment failed; check the Lightsail console logs" >&2; exit 1; fi
+            sleep 15
+          done
+          if [ "${LIVE:-0}" != "1" ]; then echo "Timed out waiting for the deployment" >&2; exit 1; fi
+          URL=$(aws lightsail get-container-services --service-name "$SERVICE_NAME" \
+            --query 'containerServices[0].url' --output text)
+          echo "Live at: $URL"
+          echo "### Deployed to $URL" >> "$GITHUB_STEP_SUMMARY"
