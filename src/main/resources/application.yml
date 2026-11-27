@@ -3,6 +3,9 @@ spring:
     name: 'hybrid-rag'
 server:
   port: 8080
+  # Trust X-Forwarded-* headers from the HTTPS proxy (e.g. AWS Lightsail) so generated
+  # URLs, redirects and the OpenAPI server URL use https instead of http.
+  forward-headers-strategy: framework
 openai:
   api-key: ${OPENAI_API_KEY}
 qdrant:
