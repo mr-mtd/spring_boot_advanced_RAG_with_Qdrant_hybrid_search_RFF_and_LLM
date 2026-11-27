@@ -12,6 +12,11 @@ qdrant:
   api-key: ${QDRANT_API_KEY}
   url: ${QDRANT_URL}
   collection: 'stackoverflow'
+app:
+  cors:
+    # Comma-separated list of browser origins allowed to call /api/** (e.g. the React frontend).
+    # Override in production with the CORS_ALLOWED_ORIGINS env var, e.g. "https://my-frontend.example.com".
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000}
 rag:
   openai-model: ${OPENAI_MODEL:gpt-4.1-mini}
 logging:

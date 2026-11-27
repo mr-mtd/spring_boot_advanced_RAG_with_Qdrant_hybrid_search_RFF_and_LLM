@@ -76,6 +76,7 @@ Settings live in `src/main/resources/application.yml`.
 | `qdrant.collection` | `QDRANT_COLLECTION` | `stackoverflow` | |
 | `rag.openai-model` | `RAG_OPENAIMODEL` | value in `application.yml` | Chat Completions model name. |
 | `logging.level.io.github.mrmtd.rag` | `LOG_LEVEL` | `DEBUG` | `DEBUG` logs full Qdrant results, prompts and answers. Use `INFO` outside local development. |
+| `app.cors.allowed-origins` | `CORS_ALLOWED_ORIGINS` | `http://localhost:5173,http://localhost:3000` | Comma-separated browser origins (e.g. the React frontend) allowed to call `/api/**`. On Lightsail, set the `CORS_ALLOWED_ORIGINS` repository variable under Settings > Secrets and variables > Actions > Variables. |
 | `server.port` | `SERVER_PORT` | `8080` | |
 
 The three required variables must be set. If any is missing the app fails at startup, and if any is blank `RagService` refuses to start.
